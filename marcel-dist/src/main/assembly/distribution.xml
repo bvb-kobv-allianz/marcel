@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <!-- TODO fileSet>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+            </includes>
+        </fileSet-->
+        <!-- TODO fileSet>
+            <directory>src/etc</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>NOTICE*</include>
+            </includes>
+        </fileSet-->
+        <!-- TODO fileSet>
+            <directory>src/etc/licenses</directory>
+            <outputDirectory>licenses</outputDirectory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+        </fileSet-->
+        <fileSet>
+            <directory>target/marcel-dist/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>target/marcel-dist/repo</directory>
+            <outputDirectory>repo</outputDirectory>
+        </fileSet>
+        <!-- TODO fileSet>
+            <directory></directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>LICENSE*</include>
+            </includes>
+        </fileSet-->
+    </fileSets>
+</assembly>

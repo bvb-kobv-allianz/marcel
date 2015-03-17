@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TODO prüfen, ob das immer noch state of the art ist -->
+
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>tar.bz2</format>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <!--fileSet>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/etc</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>NOTICE*</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/etc/licenses</directory>
+            <outputDirectory>licenses</outputDirectory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+        </fileSet-->
+        <fileSet>
+            <directory>target/marcel-cli/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <fileSet>
+            <directory>target/mable-cli/repo</directory>
+            <outputDirectory>repo</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>de/kobv/marcel/cli/log4j.xml</include>
+            </includes>
+        </fileSet>
+        <!--fileSet>
+            <directory></directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>LICENSE*</include>
+            </includes>
+        </fileSet-->
+    </fileSets>
+</assembly>

@@ -1,0 +1,284 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+        default-lazy-init="true">
+
+    <!--
+        TODO use annotation and automatic injection (for some beans, like FileUtil and CmdLine properties)
+    -->
+
+    <description>
+    </description>
+
+    <context:annotation-config />
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <description>
+        </description>
+        <property name="locations">
+            <list>
+                <value>classpath:de/kobv/marcel/cli/marcel-defaults.properties</value>
+                <value>file:#{systemProperties['user.home']}/.marcel/database.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="nullValue" value="" />
+    </bean>
+
+    <!--bean id="marcParser" class="de.kobv.marcel.parser.MarcXMLParser">
+        <description>
+
+        </description>
+    </bean-->
+
+    <bean id="cmdLine" class="de.kobv.marcel.cli.MarcelCmdLine">
+        <description>
+            Bean for command line parameters.
+        </description>
+        <property name="databaseHost" value="${database.host}" />
+        <property name="databasePort" value="${database.port}" />
+        <property name="databaseName" value="${database.name}" />
+        <property name="username" value="${database.username}" />
+        <property name="password" value="${database.password}" />
+    </bean>
+
+    <bean id="fileUtil" class="de.kobv.marcel.util.FileUtil">
+        <description>
+
+        </description>
+        <property name="deleteTempOnExit" value="true" />
+        <property name="tempBasePath" value="#{cmdLine.tempPath}" />
+    </bean>
+
+    <bean id="missingFields" class="de.kobv.marcel.statistics.MissingFields"/>
+
+    <bean id="fieldStatistics" class="de.kobv.marcel.statistics.FieldStatistics">
+        <property name="createAllocationCsv" value="#{cmdLine.importEnabled}" />
+        <property name="allocationCsv" ref="allocationCsv" />
+    </bean>
+
+    <bean id="statistics" class="de.kobv.marcel.statistics.MarcStatistics">
+        <description>
+
+        </description>
+        <property name="processors">
+            <set>
+                <ref bean="missingFields" />
+                <ref bean="fieldStatistics" />
+                <ref bean="validateLeader" />
+                <ref bean="validation" />
+            </set>
+        </property>
+    </bean>
+
+    <bean id="validation" class="de.kobv.marcel.statistics.ValidateDataField">
+        <property name="errorHandler" ref="marcErrorHandler" />
+    </bean>
+
+    <bean id="validateLeader" class="de.kobv.marcel.statistics.ValidateLeader">
+        <property name="errorHandler" ref="marcErrorHandler" />
+    </bean>
+
+    <bean id="marcErrorHandler" class="de.kobv.marcel.statistics.ErrorHandler">
+        <property name="filename" value="#{cmdLine.outputFileBasename}" />
+        <property name="fileUtil" ref="fileUtil" />
+    </bean>
+
+    <bean id="report" class="de.kobv.marcel.statistics.MarcelReport">
+        <description>
+
+        </description>
+        <property name="filename" value="#{cmdLine.outputFileBasename}" />
+        <property name="fieldStatistics" ref="fieldStatistics" />
+        <property name="missingFields" ref="missingFields" />
+        <property name="validation" ref="validation" />
+        <property name="handler" ref="handler" />
+    </bean>
+
+    <!-- TODO use different datasource -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306" /> <!-- TODO 'marcel' must be configurable -->
+        <property name="connectionProperties">
+            <map>
+                <entry key="useUnicode" value="true" />
+                <entry key="characterEncoding" value="utf8" />
+            </map>
+        </property>
+        <property name="username" value="#{cmdLine.username}" />
+        <property name="password" value="#{cmdLine.password}" />
+    </bean>
+
+    <bean id="database" class="de.kobv.marcel.db.mysql.DBMethods">
+        <description>
+
+        </description>
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="database" value="marcel" />
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="databaseImport" class="de.kobv.marcel.main.DatabaseImport">
+        <property name="dropDatabase" value="#{cmdLine.dropDatabase}" />
+        <property name="createDatabase" value="#{cmdLine.createDatabase}" />
+        <property name="dbMethods" ref="database" />
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="csvImports">
+            <set>
+                <ref bean="allUidCsvImport"/>
+                <ref bean="recordCsvImport" />
+                <ref bean="controlFieldCsvImport" />
+                <ref bean="fieldCsvImport" />
+                <ref bean="nonValidCsvImport" />
+                <ref bean="tagCsvImport" />
+            </set>
+        </property>
+    </bean>
+
+    <bean id="main" class="de.kobv.marcel.main.Main">
+        <description>
+
+        </description>
+        <property name="report" ref="report" />
+        <property name="parser" ref="parser" />
+        <property name="files" value="#{cmdLine.files}" />
+        <property name="importEnabled" value="#{cmdLine.importEnabled}" />
+        <property name="databaseImport" ref="databaseImport" />
+        <property name="errorHandler" ref="marcErrorHandler" />
+    </bean>
+
+    <bean id="parser" class="de.kobv.marcel.parser.MarcXMLParser">
+        <property name="dataSourceName" value="TODO" />
+        <property name="handler" ref="handler" />
+    </bean>
+
+    <bean id="handler" class="de.kobv.marcel.parser.DefaultMarcParserHandler">
+        <property name="filterEnabled" value="#{cmdLine.filter}" />
+        <property name="processors">
+            <set>
+                <ref bean="statistics" />
+                <ref bean="import" />
+            </set>
+        </property>
+        <property name="matcher" ref="matcher" />
+        <property name="importEnabled" value="#{cmdLine.importEnabled}" />
+        <property name="uidCsv" ref="uidCsv" />
+    </bean>
+
+    <bean id="matcher" class="de.kobv.marcel.core.OrRecordMatcher">
+        <property name="matchers">
+            <set>
+                <bean class="de.kobv.marcel.core.KobvLibrariesB3katMatcher" />
+                <bean class="de.kobv.marcel.core.KobvLibrariesGbvMatcher" />
+            </set>
+        </property>
+    </bean>
+
+    <!--===============================-->
+    <!-- Database Import Configuration -->
+    <!--===============================-->
+
+    <bean id="import" class="de.kobv.marcel.db.DatabaseImport">
+        <description>
+            Imports parsed records into database.
+        </description>
+        <property name="enabled" value="#{cmdLine.importEnabled}" />
+        <property name="recordCsv" ref="recordsCsv" />
+        <property name="controlFieldCsv" ref="controlFieldCsv" />
+        <property name="dataFieldCsv" ref="dataFieldCsv" />
+        <property name="fileUtil" ref="fileUtil" />
+    </bean>
+
+    <!-- CSV File Configuration -->
+
+    <bean id="uidCsv" class="de.kobv.marcel.db.RecordIdCsvFile">
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="filename" value="all_uids.csv" />
+    </bean>
+
+    <bean id="recordsCsv" class="de.kobv.marcel.db.RecordCsvFile">
+        <description>
+            Creates CSV file for records.
+        </description>
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="filename" value="records.csv" />
+    </bean>
+
+    <bean id="controlFieldCsv" class="de.kobv.marcel.db.ControlFieldCsvFile">
+        <description>
+
+        </description>
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="filename" value="controlfield.csv" />
+    </bean>
+
+    <bean id="dataFieldCsv" class="de.kobv.marcel.db.SubfieldCsvFiles">
+        <description>
+
+        </description>
+        <property name="fileUtil" ref="fileUtil" />
+    </bean>
+
+    <bean id="allocationCsv" class="de.kobv.marcel.db.FieldAllocationCsvFile">
+        <description>
+
+        </description>
+        <property name="fileUtil" ref="fileUtil" />
+        <property name="filename" value="fields.csv" />
+    </bean>
+
+    <bean id="allUidCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="filename" value="all_uids.csv" />
+        <property name="tableName" value="all_uids" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="uid" />
+    </bean>
+
+    <bean id="recordCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="filename" value="records.csv" />
+        <property name="tableName" value="record" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="uid, leader, has_library_y_n, valid_y_n" />
+    </bean>
+
+    <bean id="nonValidCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="filename" value="non_valid.csv" />
+        <property name="tableName" value="non_valid" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="uid, validation_message, invalid_xml" />
+    </bean>
+
+    <bean id="controlFieldCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="filename" value="controlfield.csv" />
+        <property name="tableName" value="controlfield" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="uid, tag, value" />
+    </bean>
+
+    <bean id="fieldCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="filename" value="fields.csv" />
+        <property name="tableName" value="fields" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="field, allocation, multival_alloc" />
+    </bean>
+
+    <bean id="tagCsvImport" class="de.kobv.marcel.db.mysql.TagFileCsvImport">
+        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
+        <property name="database" value="marcel" />
+        <property name="columns" value="uid, tag_idx, ind1, ind2, code, value" />
+    </bean>
+
+</beans>
