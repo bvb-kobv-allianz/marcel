@@ -43,8 +43,8 @@
     </issueManagement>
     <scm>
         <url>https://github.com/bvb-kobv-allianz/marcel</url>
-        <connection>scm:git:git://github.com/bvb-kobv-allianz/marcel.git</connection>
-        <developerConnection>scm:git:git://github.com/bvb-kobv-allianz/marcel.git</developerConnection>
+        <connection>scm:git:git://github.com:bvb-kobv-allianz/marcel.git</connection>
+        <developerConnection>scm:git:git://github.com:bvb-kobv-allianz/marcel.git</developerConnection>
     </scm>
     <modules>
         <module>marcel-core</module>
