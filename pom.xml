@@ -42,9 +42,8 @@
         <url>https://wiki.kobv.de/jira/browse/MARCEL</url>
     </issueManagement>
     <scm>
-        <connection>scm:svn:https://svn.zib.de/MARCel/trunk/marcel</connection>
-        <developerConnection>scm:svn:https://svn.zib.de/MARCel/trunk/marcel</developerConnection>
-        <url>https://svn.zib.de/MARCel/trunk/marcel</url>
+        <connection>scm:git:git://github.com/bvb-kobv-allianz/marcel.git</connection>
+        <url>https://github.com/bvb-kobv-allianz/marcel</url>
     </scm>
     <modules>
         <module>marcel-core</module>
