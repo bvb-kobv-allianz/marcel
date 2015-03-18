@@ -55,8 +55,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.2.5.RELEASE</spring.version>
-        <marcel.site.url>file:///home/kobv/maven-sites/marcel</marcel.site.url>
-        <archiva.base.url>https://ci.kobv.de/archiva/repository</archiva.base.url>
         <checkstyle.plugin.version>2.12</checkstyle.plugin.version>
     </properties>
     <dependencyManagement>
@@ -248,23 +246,4 @@
             </plugin>
         </plugins>
     </reporting>
-    <distributionManagement>
-        <site>
-            <id>kobvsites</id>
-            <name>MARCel Site</name>
-            <url>${marcel.site.url}</url>
-        </site>
-        <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>archiva.releases</id>
-            <name>Tags Repository</name>
-            <url>${archiva.base.url}/releases</url>
-        </repository>
-        <snapshotRepository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>archiva.snapshots</id>
-            <name>Snapshots Repository</name>
-            <url>${archiva.base.url}/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
