@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.kobv.marcel</groupId>
     <artifactId>marcel</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
     <name>MARCel</name>
     <description>
@@ -44,6 +44,7 @@
         <url>scm:git:git@github.com:bvb-kobv-allianz/marcel.git</url>
         <connection>scm:git:git@github.com:bvb-kobv-allianz/marcel.git</connection>
         <developerConnection>scm:git:git@github.com:bvb-kobv-allianz/marcel.git</developerConnection>
+    <tag>marcel-0.1</tag>
   </scm>
     <modules>
         <module>marcel-core</module>

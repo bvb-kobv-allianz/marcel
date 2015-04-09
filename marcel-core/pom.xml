@@ -3,7 +3,7 @@
     <parent>
         <groupId>de.kobv.marcel</groupId>
         <artifactId>marcel</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
     <artifactId>marcel-core</artifactId>
     <name>Core</name>
