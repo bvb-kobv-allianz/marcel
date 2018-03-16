@@ -12,6 +12,8 @@ import de.kobv.marcel.beans.Datafield;
 import de.kobv.marcel.beans.Record;
 import de.kobv.marcel.beans.Subfield;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class MarcXMLParser implements IMarcParser {
 
     static final String TAG_RECORD = "record";
@@ -33,11 +35,11 @@ public class MarcXMLParser implements IMarcParser {
     }
 
     /**
-     * TODO InputStream übergeben
-     * @param inputStream
-     * @throws ClassNotFoundException
-     * @throws IOException
-     * @throws MarcXMLParserException
+     * Method parses the given XML-inputStream.
+     *
+     * @param inputStream - the XML inputStream
+     * @throws IOException if an input error occurs
+     * @throws MarcXMLParserException if an error while parsing the XML occurs
      */
     public void parse(final InputStream inputStream) throws IOException, MarcXMLParserException {
         try {
@@ -104,14 +106,14 @@ public class MarcXMLParser implements IMarcParser {
         datafield.setTag(tag);
 
         String indOne = streamReader.getAttributeValue(null, "ind1");
-        if (indOne == null) {
+        if (StringUtils.isBlank(indOne)) {
             // TODO count as error
             indOne = " ";
         }
         datafield.setInd1(indOne.charAt(0));
 
         String indTwo = streamReader.getAttributeValue(null, "ind2");
-        if (indTwo == null) {
+        if (StringUtils.isBlank(indTwo)) {
             // TODO count as error
             indTwo = " ";
         }
@@ -123,9 +125,11 @@ public class MarcXMLParser implements IMarcParser {
     }
 
     /**
+     * Method parses the subfields for a given datafield. If subfields are found they will be added
+     * to the datafield.
      *
-     * @param streamReader
-     * @param datafield
+     * @param streamReader the XML streamReader
+     * @param datafield the datafield where the corresponding subfields should be added
      * @throws XMLStreamException
      *
      * TODO error handling (was wenn StartElement ist nicht SUB oder EndElement ist nicht DATA)
