@@ -2,8 +2,13 @@ package de.kobv.marcel.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import de.kobv.marcel.db.mysql.DBMethods;
 import de.kobv.marcel.main.Main;
+import de.kobv.marcel.parser.MarcXMLParser;
 import de.kobv.marcel.parser.MarcXMLParserException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
@@ -70,6 +75,22 @@ public class MarcelMain {
         }
 
         Main processor = context.getBean("main", Main.class);
+
+        if (StringUtils.isNotBlank(cmdLine.getDatabaseName())) {
+            final String dbName = cmdLine.getDatabaseName();
+            ((DBMethods) processor.getDatabaseImport().getDbMethods()).setDatabase(dbName);
+        }
+        System.out.println("Use database " + ((DBMethods) processor.getDatabaseImport().getDbMethods()).getDatabase());
+
+        if (StringUtils.isNotBlank(cmdLine.getEncoding())) {
+            final String encoding = cmdLine.getEncoding();
+            ((MarcXMLParser) processor.getParser()).setEncoding(encoding);
+            processor.getDatabaseImport().setEncoding(encoding);
+            System.out.println("Use encoding " + encoding);
+        }
+        else {
+            System.out.println("Use default encoding utf-8.");
+        }
 
         long startTime = System.currentTimeMillis();
 

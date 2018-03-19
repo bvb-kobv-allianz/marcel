@@ -2,6 +2,8 @@ package de.kobv.marcel.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -21,6 +23,8 @@ public class MarcXMLParser implements IMarcParser {
     static final String TAG_CONTROLFIELD = "controlfield";
     static final String TAG_DATAFIELD = "datafield";
     static final String TAG_SUBFIELD = "subfield";
+
+    String encoding = "utf8";
 
     /**
      * Currently parsed record.
@@ -44,7 +48,8 @@ public class MarcXMLParser implements IMarcParser {
     public void parse(final InputStream inputStream) throws IOException, MarcXMLParserException {
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(inputStream);
+            XMLStreamReader streamReader = inputFactory.createXMLStreamReader(
+                    new InputStreamReader(inputStream, Charset.forName(getEncoding())));
 
             handler.init();
 
@@ -62,6 +67,9 @@ public class MarcXMLParser implements IMarcParser {
         }
         catch (XMLStreamException xmlse) {
             throw new MarcXMLParserException(record.getUid(), xmlse);
+        }
+        catch (NullPointerException nEx) {
+            throw new MarcXMLParserException("Invalid charset " + getEncoding(), nEx);
         }
     }
 
@@ -164,5 +172,13 @@ public class MarcXMLParser implements IMarcParser {
 
     public void setDataSourceName(final String dsourceName) {
         this.dataSourceName = dsourceName;
+    }
+
+    public String getEncoding() {
+        return this.encoding;
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
     }
 }
