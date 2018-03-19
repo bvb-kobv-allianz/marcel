@@ -79,6 +79,7 @@ public class MarcelMain {
             final String dbName = cmdLine.getDatabaseName();
             ((DBMethods) processor.getDatabaseImport().getDbMethods()).setDatabase(dbName);
         }
+        System.out.println("Use database " + ((DBMethods) processor.getDatabaseImport().getDbMethods()).getDatabase());
 
 
         long startTime = System.currentTimeMillis();
