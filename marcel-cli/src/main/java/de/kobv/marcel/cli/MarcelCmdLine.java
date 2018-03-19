@@ -57,6 +57,9 @@ public class MarcelCmdLine {
     @Parameter(names = { "-f", "--filter" }, descriptionKey = "option.filter.description")
     private boolean filter = false;
 
+    @Parameter(names = { "-e", "--encoding" }, descriptionKey = "option.encoding.description")
+    private String encoding;
+
     /**
      * Enables import to database.
      */
@@ -234,6 +237,14 @@ public class MarcelCmdLine {
     public String getOutputName() {
         return outputName;
     }
+
+    public final void setEncoding(final String encoding) {
+        this.encoding = encoding;
+    }
+    public final String getEncoding() {
+        return this.encoding;
+    }
+
 
     /**
      *

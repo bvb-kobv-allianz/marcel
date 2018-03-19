@@ -49,6 +49,12 @@ public abstract class CsvFile {
     private FileUtil fileUtil;
 
     /**
+     * Encoding.
+     */
+    private String encoding = "utf8";
+
+
+    /**
      * Returns writer for output into CSV file.
      * @return Writer
      */
@@ -56,7 +62,7 @@ public abstract class CsvFile {
         if (out == null) {
             LOG.debug(fileUtil.getTempPath() + "/" + getFilename());
             out = Files.newBufferedWriter(fileUtil.getTempPath().resolve(getFilename()),
-                    Charset.forName("UTF8"),
+                    Charset.forName(getEncoding()),
                     new OpenOption[] { StandardOpenOption.APPEND, StandardOpenOption.CREATE } );
         }
         return out;
@@ -83,6 +89,14 @@ public abstract class CsvFile {
 
     public void setFileUtil(final FileUtil futil) {
         this.fileUtil = futil;
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getEncoding() {
+        return this.encoding;
     }
 
 }

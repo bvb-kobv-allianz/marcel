@@ -5,6 +5,7 @@ import com.beust.jcommander.ParameterException;
 
 import de.kobv.marcel.db.mysql.DBMethods;
 import de.kobv.marcel.main.Main;
+import de.kobv.marcel.parser.MarcXMLParser;
 import de.kobv.marcel.parser.MarcXMLParserException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -81,6 +82,15 @@ public class MarcelMain {
         }
         System.out.println("Use database " + ((DBMethods) processor.getDatabaseImport().getDbMethods()).getDatabase());
 
+        if (StringUtils.isNotBlank(cmdLine.getEncoding())) {
+            final String encoding = cmdLine.getEncoding();
+            ((MarcXMLParser) processor.getParser()).setEncoding(encoding);
+            processor.getDatabaseImport().setEncoding(encoding);
+            System.out.println("Use encoding " + encoding);
+        }
+        else {
+            System.out.println("Use default encoding utf-8.");
+        }
 
         long startTime = System.currentTimeMillis();
 

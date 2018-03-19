@@ -55,6 +55,12 @@ public class CsvImport implements ICsvImport {
     private String columns;
 
     /**
+     * Encoding.
+     */
+    private String encoding = "utf8";
+
+
+    /**
      * Importing a file.
      */
     public void importFile() {
@@ -103,11 +109,12 @@ public class CsvImport implements ICsvImport {
      * @return
      */
     public String getSql() {
-        String loadStatementSuffix = " CHARACTER SET utf8 COLUMNS TERMINATED BY '" + getCsvDelimiter()
+        String loadStatementSuffix = " CHARACTER SET <encoding> COLUMNS TERMINATED BY '" + getCsvDelimiter()
                 + "' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n'";
 
         String sqlStr = "LOAD DATA LOCAL INFILE '" + getPath().resolve(getFilename()).toString() + "' INTO TABLE "
-                + dbMethods.getDatabase() + "." + getTableName() +  loadStatementSuffix + " (" + getColumns() + ")";
+                + dbMethods.getDatabase() + "." + getTableName() +
+                    loadStatementSuffix.replaceAll("<encoding>", getEncoding()) + " (" + getColumns() + ")";
 
         LOG.debug("Generating import SQL for file: " + getPath().resolve(getFilename()).toString());
 
@@ -160,6 +167,14 @@ public class CsvImport implements ICsvImport {
 
     public void setColumns(final String cols) {
         this.columns = cols;
+    }
+
+    public String getEncoding() {
+        return this.encoding;
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
     }
 
 }
