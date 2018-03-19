@@ -6,7 +6,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd"
-        default-lazy-init="true">
+       default-lazy-init="true">
 
     <!--
         TODO use annotation and automatic injection (for some beans, like FileUtil and CmdLine properties)
@@ -235,49 +235,42 @@
     </bean>
 
     <bean id="allUidCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
         <property name="filename" value="all_uids.csv" />
         <property name="tableName" value="all_uids" />
-        <property name="database" value="marcel" />
         <property name="columns" value="uid" />
     </bean>
 
     <bean id="recordCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
         <property name="filename" value="records.csv" />
         <property name="tableName" value="record" />
-        <property name="database" value="marcel" />
         <property name="columns" value="uid, leader, has_library_y_n, valid_y_n" />
     </bean>
 
     <bean id="nonValidCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
         <property name="filename" value="non_valid.csv" />
         <property name="tableName" value="non_valid" />
-        <property name="database" value="marcel" />
         <property name="columns" value="uid, validation_message, invalid_xml" />
     </bean>
 
     <bean id="controlFieldCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
         <property name="filename" value="controlfield.csv" />
         <property name="tableName" value="controlfield" />
-        <property name="database" value="marcel" />
         <property name="columns" value="uid, tag, value" />
     </bean>
 
     <bean id="fieldCsvImport" class="de.kobv.marcel.db.mysql.CsvImport">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dbMethods" ref="database" />
         <property name="filename" value="fields.csv" />
         <property name="tableName" value="fields" />
-        <property name="database" value="marcel" />
         <property name="columns" value="field, allocation, multival_alloc" />
     </bean>
 
     <bean id="tagCsvImport" class="de.kobv.marcel.db.mysql.TagFileCsvImport">
-        <property name="dataSource" ref="dataSource" />
         <property name="dbMethods" ref="database" />
-        <property name="database" value="marcel" />
         <property name="columns" value="uid, tag_idx, ind1, ind2, code, value" />
     </bean>
 
