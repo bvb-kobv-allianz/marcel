@@ -1,9 +1,9 @@
 package de.kobv.marcel.db.mysql;
 
 import de.kobv.marcel.db.ICsvImport;
+
 import org.apache.log4j.Logger;
 
-import javax.sql.DataSource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -25,19 +25,14 @@ public class CsvImport implements ICsvImport {
     private static final Logger LOG = Logger.getLogger(CsvImport.class);
 
     /**
-     * Database access object.
+     * Database connection and creation/manipulation.
      */
-    private DataSource dataSource;
+    private DBMethods dbMethods;
 
     /**
      * Path to folder containing CSV file.
      */
     private Path path; // TODO use Path or File
-
-    /**
-     * Name of database.
-     */
-    private String database;
 
     /**
      * Name of CSV file.
@@ -60,6 +55,12 @@ public class CsvImport implements ICsvImport {
     private String columns;
 
     /**
+     * Encoding.
+     */
+    private String encoding = "utf8";
+
+
+    /**
      * Importing a file.
      */
     public void importFile() {
@@ -76,7 +77,7 @@ public class CsvImport implements ICsvImport {
         Connection conn = null;
 
         try {
-            conn = getDataSource().getConnection();
+            conn = dbMethods.getDataSource().getConnection();
             stmt = conn.createStatement();
             String sql = getSql();
             LOG.debug("SQL = " + sql);
@@ -108,11 +109,12 @@ public class CsvImport implements ICsvImport {
      * @return
      */
     public String getSql() {
-        String loadStatementSuffix = " CHARACTER SET utf8 COLUMNS TERMINATED BY '" + getCsvDelimiter()
+        String loadStatementSuffix = " CHARACTER SET <encoding> COLUMNS TERMINATED BY '" + getCsvDelimiter()
                 + "' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n'";
 
         String sqlStr = "LOAD DATA LOCAL INFILE '" + getPath().resolve(getFilename()).toString() + "' INTO TABLE "
-                + getDatabase() + "." + getTableName() +  loadStatementSuffix + " (" + getColumns() + ")";
+                + dbMethods.getDatabase() + "." + getTableName() +
+                    loadStatementSuffix.replaceAll("<encoding>", getEncoding()) + " (" + getColumns() + ")";
 
         LOG.debug("Generating import SQL for file: " + getPath().resolve(getFilename()).toString());
 
@@ -127,12 +129,12 @@ public class CsvImport implements ICsvImport {
         this.path = folder;
     }
 
-    public String getDatabase() {
-        return database;
+    public DBMethods getDbMethods() {
+        return dbMethods;
     }
 
-    public void setDatabase(final String dbase) {
-        this.database = dbase;
+    public void setDbMethods(DBMethods dbMethods) {
+        this.dbMethods = dbMethods;
     }
 
     public String getCsvDelimiter() {
@@ -167,12 +169,12 @@ public class CsvImport implements ICsvImport {
         this.columns = cols;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public String getEncoding() {
+        return this.encoding;
     }
 
-    public void setDataSource(final DataSource source) {
-        this.dataSource = source;
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
     }
 
 }

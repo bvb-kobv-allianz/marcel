@@ -7,6 +7,8 @@ import java.nio.file.Path;
  */
 public interface ICsvImport {
 
+    void setEncoding(String encoding);
+
     void setPath(Path path);
 
     void importFile();

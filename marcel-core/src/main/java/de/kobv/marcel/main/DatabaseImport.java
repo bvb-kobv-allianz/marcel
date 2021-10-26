@@ -28,6 +28,11 @@ public class DatabaseImport {
     private IMarcelDatabase dbMethods;
 
     /**
+     * Encoding.
+     */
+    private String encoding = "utf8";
+
+    /**
      * Should database be deleted before import?
      */
     private boolean dropDatabase = false;
@@ -57,6 +62,7 @@ public class DatabaseImport {
         LOG.debug("Importing CSV files ...");
         // TODO dbMethods.createStatistics(); remove
         for (ICsvImport csvFile : getCsvImports()) {
+            csvFile.setEncoding(getEncoding());
             csvFile.setPath(fileUtil.getTempPath()); // TODO do differently
             csvFile.importFile();
         }
@@ -103,5 +109,13 @@ public class DatabaseImport {
 
     public void setFileUtil(final FileUtil futil) {
         this.fileUtil = futil;
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getEncoding() {
+        return this.encoding;
     }
 }

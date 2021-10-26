@@ -23,8 +23,6 @@ public class TagFileCsvImport extends CsvImport {
      */
     private static final Logger LOG = Logger.getLogger(TagFileCsvImport.class);
 
-    private DBMethods dbMethods;
-
     @Override
     public void importFile() {
         // TODO get all files with SUBFIELD_PREFIX
@@ -47,13 +45,13 @@ public class TagFileCsvImport extends CsvImport {
     }
 
     public void createTable() {
-        String createSubfieldTableDS = dbMethods.getSql("createSubfieldTable");
+        String createSubfieldTableDS = getDbMethods().getSql("createSubfieldTable");
 
         Statement stmt = null;
         Connection conn = null;
 
         try {
-            conn = getDataSource().getConnection();
+            conn = getDbMethods().getDataSource().getConnection();
             stmt = conn.createStatement();
             stmt.execute(createSubfieldTableDS.replaceAll("<table>", getTableName()));
         }
@@ -109,14 +107,6 @@ public class TagFileCsvImport extends CsvImport {
         });*/
 
         return files;
-    }
-
-    public DBMethods getDbMethods() {
-        return dbMethods;
-    }
-
-    public void setDbMethods(final DBMethods methods) {
-        this.dbMethods = methods;
     }
 
 }
