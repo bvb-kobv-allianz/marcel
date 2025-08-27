@@ -4,6 +4,8 @@ import de.kobv.marcel.beans.Datafield;
 import de.kobv.marcel.beans.Record;
 import de.kobv.marcel.beans.Subfield;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class ValidateDataField extends AbstractRecordProcessor {
      * @param code Subfield code
      */
     private void validateSubfieldCode(final String uid, final String tag, final String code) {
-        if (!Character.isLetterOrDigit(code.charAt(0))) {
+        if (StringUtils.isNotBlank(code) && !Character.isLetterOrDigit(code.charAt(0)) && code.charAt(0) != '$') {
             getErrorHandler().error(uid, "INVALID_SUBFIELD", tag + ":" + code);
         }
     }
